@@ -4,6 +4,7 @@
   "description": "organizations required to maintain all logs of employees to pay their wages on daily/weekly/monthly basis. for this kind of activites we need a particular format and discipline to maintain organizations, we provide all kind of operational activites.",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,22 @@
   "bugs": {
     "url": "https://github.com/sunilcoviet/PayRoll_Web_Application/issues"
   },
-  "homepage": "https://github.com/sunilcoviet/PayRoll_Web_Application#readme"
+  "homepage": "https://github.com/sunilcoviet/PayRoll_Web_Application#readme",
+  "dependencies": {
+    "nodemon": "^2.0.20",
+    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "jsonwebtoken": "^8.5.1",
+    "md5": "^2.3.0",
+    "mongodb": "^4.4.1",
+    "mongoose": "^6.2.8",
+    "morgan": "^1.10.0",
+    "node-cron": "^3.0.0",
+    "serverless-http": "^3.0.1",
+    "validator": "^13.7.0"
+  }
 }
