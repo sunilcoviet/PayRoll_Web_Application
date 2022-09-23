@@ -1,0 +1,19 @@
+{
+  "name": "payroll_web_application",
+  "version": "1.0.0",
+  "description": "organizations required to maintain all logs of employees to pay their wages on daily/weekly/monthly basis. for this kind of activites we need a particular format and discipline to maintain organizations, we provide all kind of operational activites.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sunilcoviet/PayRoll_Web_Application.git"
+  },
+  "author": "Sunil Kotte",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sunilcoviet/PayRoll_Web_Application/issues"
+  },
+  "homepage": "https://github.com/sunilcoviet/PayRoll_Web_Application#readme"
+}
