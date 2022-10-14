@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const employeeSchema = new mongoose.Schema({
-  employeerId: {
+  employerId: {
     type: mongoose.Types.ObjectId,
     ref: "employeer",
   },
@@ -185,6 +185,10 @@ const employeeSchema = new mongoose.Schema({
   history: [
     {
       paysRoll: {
+        month: {
+          type: Date,
+          require: true,
+        },
         payStart: {
           type: Date,
           require: true,
@@ -310,7 +314,13 @@ const employeeSchema = new mongoose.Schema({
       },
     ],
   },
-
+  employeeId: {
+    type: Number,
+    required: [true, "Please Enter Your employee Number"],
+    unique: true,
+    maxLength: [30, "Name cannot exceed 30 characters"],
+    minLength: [4, "Name should have more than 4 characters"],
+  },
   department: {
     type: String,
     required: [true, "Please select department"],

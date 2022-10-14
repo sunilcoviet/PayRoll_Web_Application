@@ -4,14 +4,14 @@ const validator = require("validator");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
-const employeerSchema = new mongoose.Schema({
-   employeerID: {
-        type: Number,
-        required: [true, "Please Enter Your Name"],
-        unique: true,
-        maxLength: [30, "Name cannot exceed 30 characters"],
-        minLength: [4, "Name should have more than 4 characters"],
-    },
+const employerSchema = new mongoose.Schema({
+  //  employeerID: {
+  //       type: Number,
+  //       required: [true, "Please Enter Your Name"],
+  //       unique: true,
+  //       maxLength: [30, "Name cannot exceed 30 characters"],
+  //       minLength: [4, "Name should have more than 4 characters"],
+  //   },
   fullname: {
     type: String,
     required: [true, "Please Enter Your Name"],
@@ -31,19 +31,17 @@ const employeerSchema = new mongoose.Schema({
     minLength: [4, "Name should have more than 4 characters"],
     unique: true,
   },
-  IRDNo: {
-    type: Number,
-    required: [true, "Please Enter Your IRD No"],
-    unique: true,
-    maxLength: [10, "Name cannot exceed 10 characters"],
-    minLength: [6, "Name should have more than 6 characters"],
-},
+  phoneNumber: {
+    home: { type: Number, required: false },
+    mobile: { type: Number, required: false },
+  },
   email: {
     type: String,
     required: [true, "Please Enter Your Email"],
     unique: true,
     validate: [validator.isEmail, "Please Enter a valid Email"],
-    match: /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+    match:
+      /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
   },
   password: {
     type: String,
@@ -51,10 +49,14 @@ const employeerSchema = new mongoose.Schema({
     minLength: [8, "Password should be greater than 8 characters"],
     select: false,
   },
+  idProof: {
+    type: String,
+    default: "",
+  },
   access_token: {
     type: String,
   },
-  age:{
+  age: {
     type: Number,
     // required: [true, "Please Enter Your Age"]
   },
@@ -112,4 +114,4 @@ userSchema.methods.getResetPasswordToken = function () {
   return resetToken;
 };
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("Employer", employerSchema);
