@@ -1,8 +1,8 @@
-const Users = require("../Models/Users");
+const User = require("../../Models/Employer/EmployeerModel");
 const {createAccessToken,createRefreshToken}=require ("../../utils/accesstoken");
 const md5 = require('md5');
 
-const employeerCtrl = {
+const employerCtrl = {
     // Fetch All Patients Info
     usersList: async (req, res) => {
 
@@ -179,4 +179,4 @@ const employeerCtrl = {
 };
 
 
-module.exports = employeerCtrl;
+module.exports = employerCtrl;

@@ -5,12 +5,12 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const AuthRouter = require('./Routes/AuthenticationRoutes');
 const AdminRouter = require('./Routes/AdminRoutes');
-const DoctorsRouter = require('./Routes/DoctorsRoutes');
-const ModeratorRouter = require('./Routes/ModeratorRoutes');
-const PatientRouter = require('./Routes/PatientRoutes');
+const EmployeeRouter = require('./Routes/EmployeeRoutes');
+const EmployerRouter = require('./Routes/EmployerRoutes');
+const OrganizationRouter = require('./Routes/OrganizerRoutes');
 const SupervisorRouter = require('./Routes/SupervisorRoutes');
 const createAdmin = require('./utils/defaultAdmin');
-const QueryRouter=require('./Routes/queryRoutes');
+// const QueryRouter=require('./Routes/queryRoutes');
 
 const jwt = require("jsonwebtoken");        
 const md5 = require('md5');
@@ -29,7 +29,9 @@ app.use((req, res, next) => {
 //Routes
 app.use('/api/auth', AuthRouter);
 app.use('/api/admin', AdminRouter);
-app.use('/api/query',QueryRouter);
+app.use('/api/employee',EmployeeRouter);
+app.use('/api/employer',EmployerRouter);
+app.use('/api/organization',OrganizationRouter);
 
 
 //mongodb URL
