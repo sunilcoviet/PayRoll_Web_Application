@@ -32,7 +32,7 @@ const standardPaySchema = new mongoose.Schema({
         default: "thrusday, friday",
       },
       paySlips: {
-        type: String,
+        type: Boolean,
         description: "to show pay types & rates",
         default: "true",
       },

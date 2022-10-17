@@ -10,19 +10,19 @@ const employeeSchema = new mongoose.Schema({
     ref: "Organization",
   },
   employeeProfile: {
-    fullname: {
+    fullName: {
       type: String,
       required: [true, "Please Enter Your Name"],
       maxLength: [30, "Name cannot exceed 30 characters"],
       minLength: [4, "Name should have more than 4 characters"],
     },
-    firstname: {
+    firstName: {
       type: String,
       required: [true, "Please Enter Your Name"],
       maxLength: [30, "Name cannot exceed 30 characters"],
       minLength: [4, "Name should have more than 4 characters"],
     },
-    surname: {
+    surName: {
       type: String,
       required: [true, "Please Enter Your Name"],
       maxLength: [30, "Name cannot exceed 30 characters"],
@@ -314,12 +314,12 @@ const employeeSchema = new mongoose.Schema({
   //     },
   //   ],
   // },
-  employeeId: {
+  customEmployeeId: {
     type: Number,
     required: [true, "Please Enter Your employee Number"],
     unique: true,
-    maxLength: [30, "Name cannot exceed 30 characters"],
-    minLength: [4, "Name should have more than 4 characters"],
+    maxLength: [5, "Name cannot exceed 5 characters"],
+    minLength: [1, "Name should have more than 1 characters"],
   },
   department: {
     type: String,

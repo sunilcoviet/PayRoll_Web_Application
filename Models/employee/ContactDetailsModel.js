@@ -9,6 +9,10 @@ const contactDetailsSchema = new mongoose.Schema({
     type: mongoose.Types.employeeId,
     ref: "Employee",
   },
+  defaultEmployerId: {
+    type: mongoose.Types.ObjectId,
+    ref: "Employer",
+  },
   employeeCode: { type: String, required: false },
   address: {
     unit: {

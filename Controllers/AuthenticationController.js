@@ -1,29 +1,39 @@
-const Users = require("../Models/Users");
+const Employer = require("../Models/Employer/EmployeerModel");
 
-const Doctor = require('../Models/DoctorModel');
-const Moderator= require(+'../Models/ModeratorModel');
-const Supervisor = require('../Models/SupervisorModel');
-const jwt = require('jsonwebtoken');
+const Admins = require("../Models/AdminModel");
+// const Moderator = require(+"../Models/ModeratorModel");
+// const Supervisor = require("../Models/SupervisorModel");
+const jwt = require("jsonwebtoken");
 // const bcrypt = require("bcrypt");
 
-const md5 = require('md5');
-const {createAccessToken,createRefreshToken}=require ("../utils/accesstoken");
+const md5 = require("md5");
+const {
+  createAccessToken,
+  createRefreshToken,
+} = require("../utils/accesstoken");
 
 const authCtrl = {
   // Enroll PAtient
   register: async (req, res) => {
     try {
-      
-      const { fullname, username, email, password, gender,age,weight,height,bloodgroup } = req.body;
+      const {
+        fullname,
+        firstname,
+        surname,
+        email,
+        password,
+        idProof,
+        age,
+      } = req.body;
 
-      let newUserName = username.toLowerCase().replace(/ /g, "");
+      let newUserName = fullname.toLowerCase().replace(/ /g, "");
 
-      const user_name = await Users.findOne({ username: newUserName });
+      const user_name = await Employer.findOne({ username: newUserName });
       if (user_name) {
         return res.status(400).json({ msg: "username is already taken." });
       }
 
-      const user_email = await Users.findOne({ email });
+      const user_email = await Employer.findOne({ email });
       if (user_email) {
         return res
           .status(400)
@@ -38,43 +48,50 @@ const authCtrl = {
 
       const passwordHash = await md5(password);
 
-      const newUser = new Users({
+      const newEmployer = new Employer({
         fullname,
         username: newUserName,
         email,
-        password:passwordHash,
-       gender,
-       age,
-       weight,
-       height,
-       bloodgroup
+        password: passwordHash,
+        firstname,
+        surname,
+        idProof,
+        age,
       });
 
-      const access_token = createAccessToken({ id: newUser._id, username: newUser.username, email: newUser.email, role: newUser.role });
-      const refresh_token = createRefreshToken({ id: newUser._id, username: newUser.username, email: newUser.email, role: newUser.role });
+      const access_token = createAccessToken({
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+        role: newUser.role,
+      });
+      const refresh_token = createRefreshToken({
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+        role: newUser.role,
+      });
 
-      newUser.access_token  = access_token;
+      newUser.access_token = access_token;
 
       res.cookie("refreshtoken", refresh_token, {
         httpOnly: true,
         path: "/api/refresh_token",
         maxAge: 30 * 24 * 60 * 60 * 1000, //validity of 30 days
       });
-      
-    
-      await newUser.save((err,result) => {
+
+      await newUser.save((err, result) => {
         console.log(JSON.stringify(result));
         res.json({
           msg: "Registered Successfully!",
           access_token,
           user: {
-            ...newUser._doc,            
+            ...newUser._doc,
             password: passwordHash,
           },
         });
         // res.json({ msg: "registered" });
       });
-      
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
@@ -82,12 +99,11 @@ const authCtrl = {
 
   changePassword: async (req, res) => {
     try {
-      const {oldPassword, newPassword} = req.body;
+      const { oldPassword, newPassword } = req.body;
+      const {_id}=req.params;
+      const user = await Employer.findOne({ _id:_id });
 
-      const user = await Users.findOne({ _id: req.user._id });
-
-      
-      if (md5(oldPassword)!==user.password) {
+      if (md5(oldPassword) !== user.password) {
         return res.status(400).json({ msg: "Your password is wrong." });
       }
 
@@ -98,11 +114,13 @@ const authCtrl = {
       }
 
       const newPasswordHash = md5(newPassword);
-      
-      await Users.findOneAndUpdate({_id: req.user._id}, {password: newPasswordHash });
 
-      res.json({msg: "Password updated successfully."});
+      await Employer.findOneAndUpdate(
+        { _id:user._id },
+        { password: newPasswordHash }
+      );
 
+      res.json({ msg: "Password updated successfully." });
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
@@ -150,12 +168,15 @@ const authCtrl = {
   //     return res.status(500).json({ msg: err.message });
   //   }
   // },
- 
+
   adminLogin: async (req, res) => {
     try {
       const { email, password } = req.body;
-      const passwordHash =await md5(password);
-      const user = await Admins.findOne({ email:email,password:passwordHash});
+      const passwordHash = await md5(password);
+      const user = await Admins.findOne({
+        email: email,
+        password: passwordHash,
+      });
 
       if (!user) {
         return res.status(400).json({ msg: "Email or Password is incorrect." });
@@ -193,19 +214,29 @@ const authCtrl = {
       const token = req.header("Authorization");
       const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       var logoutuser;
-        
-      if(decoded.role==="patient"){
-        logoutuser  = await Users.findOneAndUpdate({_id: decoded.id},{is_active:false});
-      }
-      else if(decoded.role==="Doctor"){
-        logoutuser  = await Doctor.findOneAndUpdate({_id: decoded.id},{is_active:false});
-      }
-      else if(decoded.role==="Moderator"){
-        logoutuser  = await Moderator.findOneAndUpdate({_id: decoded.id},{is_active:false});
-      }
-      else if(decoded.role==="Supervisor"){
-        logoutuser  = await Supervisor.findOneAndUpdate({_id: decoded.id},{is_active:false});
-      }
+
+      if (decoded.role === "Employer") {
+        logoutuser = await Employer.findOneAndUpdate(
+          { _id: decoded.id },
+          { is_active: false }
+        );
+      } else if (decoded.role === "Admin") {
+        logoutuser = await Admin.findOneAndUpdate(
+          { _id: decoded.id },
+          { is_active: false }
+        );
+      } 
+      // else if (decoded.role === "Moderator") {
+      //   logoutuser = await Moderator.findOneAndUpdate(
+      //     { _id: decoded.id },
+      //     { is_active: false }
+      //   );
+      // } else if (decoded.role === "Supervisor") {
+      //   logoutuser = await Supervisor.findOneAndUpdate(
+      //     { _id: decoded.id },
+      //     { is_active: false }
+      //   );
+      // }
       res.clearCookie("refreshtoken", { path: "/api/refresh_token" });
       return res.json({ msg: "Logged out Successfully." });
     } catch (err) {
@@ -228,7 +259,7 @@ const authCtrl = {
             res.status(400).json({ msg: "Please login again." });
           }
 
-          const user = await Users.findById(result._id);
+          const user = await Employer.findById(result._id);
           //   .select("-password")
           //   .populate("followers following", "-password");
 
@@ -245,6 +276,5 @@ const authCtrl = {
     }
   },
 };
-
 
 module.exports = authCtrl;

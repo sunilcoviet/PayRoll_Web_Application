@@ -14,26 +14,28 @@ const employerSchema = new mongoose.Schema({
   //   },
   fullname: {
     type: String,
-    required: [true, "Please Enter Your Name"],
+    required: [true, "Please Enter Your fullName"],
+    maxLength: [30, "Name cannot exceed 30 characters"],
+    minLength: [4, "Name should have more than 4 characters"],
+  },
+  username: {
+    type: String,
+    required: [true, "Please Enter Your fullName"],
     maxLength: [30, "Name cannot exceed 30 characters"],
     minLength: [4, "Name should have more than 4 characters"],
   },
   firstname: {
     type: String,
-    required: [true, "Please Enter Your Name"],
+    required: [true, "Please Enter Your firstName"],
     maxLength: [30, "Name cannot exceed 30 characters"],
     minLength: [4, "Name should have more than 4 characters"],
   },
   surname: {
     type: String,
-    required: [true, "Please Enter Your Name"],
+    required: [true, "Please Enter Your SurName"],
     maxLength: [30, "Name cannot exceed 30 characters"],
     minLength: [4, "Name should have more than 4 characters"],
     unique: true,
-  },
-  phoneNumber: {
-    home: { type: Number, required: false },
-    mobile: { type: Number, required: false },
   },
   email: {
     type: String,
