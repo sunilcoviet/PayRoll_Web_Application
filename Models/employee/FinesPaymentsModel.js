@@ -25,6 +25,7 @@ const finesPaymentSchema = new mongoose.Schema({
       totalPayment: { type: Number, required: false },
       paymentForPays: { type: Number, required: false },
     },
-  ]
+  ],
+  deleted:{type: Boolean, required: false},
 });
 module.exports = mongoose.model("FinesPayment", finesPaymentSchema);

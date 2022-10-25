@@ -334,6 +334,7 @@ const employeeSchema = new mongoose.Schema({
     required: [true, "Please select Job Name/Account code"],
   },
   is_active: { type: Boolean, default: false },
+  deleted: { type: Boolean, default: false},
   createdAt: {
     type: Date,
     default: Date.now,
