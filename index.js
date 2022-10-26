@@ -8,7 +8,7 @@ const AdminRouter = require('./Routes/AdminRoutes');
 const EmployeeRouter = require('./Routes/EmployeeRoutes');
 const EmployerRouter = require('./Routes/EmployerRoutes');
 const OrganizationRouter = require('./Routes/OrganizerRoutes');
-const SupervisorRouter = require('./Routes/SupervisorRoutes');
+// const SupervisorRouter = require('./Routes/SupervisorRoutes');
 const createAdmin = require('./utils/defaultAdmin');
 // const QueryRouter=require('./Routes/queryRoutes');
 
@@ -31,7 +31,7 @@ app.use('/api/auth', AuthRouter);
 app.use('/api/admin', AdminRouter);
 app.use('/api/employee',EmployeeRouter);
 app.use('/api/employer',EmployerRouter);
-app.use('/api/organization',OrganizationRouter);
+// app.use('/api/organization',OrganizationRouter);
 
 
 //mongodb URL

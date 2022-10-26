@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
-const contactDetailsSchema = new mongoose.Schema({
+const contactDetailSchema = new mongoose.Schema({
   defaultEmployeeId: {
     type: mongoose.Types.ObjectId,
     ref: "Employee",
   },
   customEmployeeId: {
-    type: mongoose.Types.employeeId,
-    ref: "Employee",
+   type :Number,
+    required: true,
   },
   defaultEmployerId: {
     type: mongoose.Types.ObjectId,
@@ -28,4 +28,4 @@ const contactDetailsSchema = new mongoose.Schema({
     mobile: { type: Number, required: false },
   },
 });
-module.exports = mongoose.model("ContactDetails", contactDetailsSchema);
+module.exports = mongoose.model("ContactDetails", contactDetailSchema);

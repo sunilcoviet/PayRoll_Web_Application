@@ -1,13 +1,12 @@
 const md5 = require('md5');
-const User = require("../Models/Admin");
+const User = require("../Models/AdminModel");
 const {createAccessToken, createRefreshToken}=require("./accesstoken");
 
 
 const createAdmin = async () => {
     const fullname ='ADMIN';
-
     const username = 'admin';
-    const email = 'admin@PallRoll.com';
+    const email = 'admin@PayRoll.com';
     const userpassword = '123456';
     const role = 'Admin';
     const gender='male';

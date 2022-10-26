@@ -6,9 +6,9 @@ const historySchema = new mongoose.Schema({
     ref: "Employee",
   },
   customEmployeeId: {
-    type: mongoose.Types.employeeId,
-    ref: "Employee",
-  },
+    type :Number,
+     required: true,
+   },
   history: [
     {
       month: {

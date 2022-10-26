@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const validator = require("validator");
 const employeeSchema = new mongoose.Schema({
   employerId: {
     type: mongoose.Types.ObjectId,

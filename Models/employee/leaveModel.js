@@ -6,9 +6,9 @@ const leaveSchema = new mongoose.Schema({
         ref: "Employee",
       },
       customEmployeeId: {
-        type: mongoose.Types.employeeId,
-        ref: "Employee",
-      },
+        type :Number,
+         required: true,
+       },
       lastLeave: {
         type: Date,
         description: "Last Leave taken by employee",

@@ -80,7 +80,7 @@ const employerSchema = new mongoose.Schema({
   resetPasswordExpire: Date,
 });
 
-userSchema.pre("save", async function (next) {
+employerSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
   }
@@ -88,7 +88,7 @@ userSchema.pre("save", async function (next) {
 });
 
 // JWT TOKEN
-userSchema.methods.getJWTToken = function () {
+employerSchema.methods.getJWTToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
   });
@@ -101,7 +101,7 @@ userSchema.methods.getJWTToken = function () {
 // };
 
 // Generating Password Reset Token
-userSchema.methods.getResetPasswordToken = function () {
+employerSchema.methods.getResetPasswordToken = function () {
   // Generating Token
   const resetToken = crypto.randomBytes(20).toString("hex");
 

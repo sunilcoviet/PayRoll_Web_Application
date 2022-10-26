@@ -1,7 +1,4 @@
-const Users = require('../Models/Users');
-const Doctor = require('../Models/DoctorModel');
-const Moderator= require('../Models/ModeratorModel');
-const Supervisor = require('../Models/SupervisorModel');
+const Users = require("../Models/Employer/EmployeerModel");
 const jwt = require('jsonwebtoken');
 
 const auth = async (req,res,next) => {
@@ -22,17 +19,6 @@ const auth = async (req,res,next) => {
         if(decoded.role==="patient"){
            user  = await Users.findOne({_id: decoded.id});
         }
-        else if(decoded.role==="Doctor"){
-            user  = await Doctor.findOne({_id: decoded.id});
-        }
-        else if(decoded.role==="Moderator"){
-            user  = await Moderator.findOne({_id: decoded.id});
-        }
-        else if(decoded.role==="Supervisor"){
-            user  = await Supervisor.findOne({_id: decoded.id});
-        }
-        
-
         req.user = user;
         next();
     } catch (err) {

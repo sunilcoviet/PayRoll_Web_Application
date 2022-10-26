@@ -35,7 +35,7 @@ const employeeCtrl = {
               .status(400)
               .json({ msg: "required Details are missing to register." });
           }
-          customEmployeeId = await Employee.find((err, result) => {
+          var customEmployeeId = await Employee.find((err, result) => {
             if (!err) {
               return result.length;
             }
@@ -252,11 +252,9 @@ const employeeCtrl = {
     try {
       const {
         employerId,
-        defaultEmployeeId,
-        customEmployeeId,
         organizationId,
       } = req.body;
-      if (!defaultEmployeeId || !customEmployeeId) {
+      if (!employerId || !organizationId) {
         return res.status(400).json({ msg: "required Details are missing." });
       }
       const list = await Employee.find(
@@ -281,7 +279,7 @@ const employeeCtrl = {
     const { _Id } = req.params;
     const { defaultEmployeeId, employeeCode, address, phoneNumber, methods } =
       req.body;
-    if (!defaultEmployeeId || !customEmployeeId) {
+    if (!defaultEmployeeId) {
       return res
         .status(400)
         .json({ msg: "required Details are missing to register." });

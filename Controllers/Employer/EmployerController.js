@@ -1,4 +1,4 @@
-const User = require("../../Models/Employer/EmployeerModel");
+const Users = require("../../Models/Employer/EmployeerModel");
 const {createAccessToken,createRefreshToken}=require ("../../utils/accesstoken");
 const md5 = require('md5');
 
