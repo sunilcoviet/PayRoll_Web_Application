@@ -1,5 +1,4 @@
 const Employer = require("../Models/Employer/EmployeerModel");
-
 const Admins = require("../Models/AdminModel");
 // const Moderator = require(+"../Models/ModeratorModel");
 // const Supervisor = require("../Models/SupervisorModel");
@@ -32,14 +31,12 @@ const authCtrl = {
       if (user_name) {
         return res.status(400).json({ msg: "username is already taken." });
       }
-
       const user_email = await Employer.findOne({ email });
       if (user_email) {
         return res
           .status(400)
           .json({ msg: "This email is already registered." });
       }
-
       if (password.length < 6) {
         return res
           .status(400)
@@ -60,19 +57,19 @@ const authCtrl = {
       });
 
       const access_token = createAccessToken({
-        id: newUser._id,
-        username: newUser.username,
-        email: newUser.email,
-        role: newUser.role,
+        id: newEmployer._id,
+        username: newEmployer.username,
+        email: newEmployer.email,
+        role: newEmployer.role,
       });
       const refresh_token = createRefreshToken({
-        id: newUser._id,
-        username: newUser.username,
-        email: newUser.email,
-        role: newUser.role,
+        id: newEmployer._id,
+        username: newEmployer.username,
+        email: newEmployer.email,
+        role: newEmployer.role,
       });
 
-      newUser.access_token = access_token;
+      newEmployer.access_token = access_token;
 
       res.cookie("refreshtoken", refresh_token, {
         httpOnly: true,
@@ -80,13 +77,13 @@ const authCtrl = {
         maxAge: 30 * 24 * 60 * 60 * 1000, //validity of 30 days
       });
 
-      await newUser.save((err, result) => {
+      await newEmployer.save((err, result) => {
         console.log(JSON.stringify(result));
         res.json({
           msg: "Registered Successfully!",
           access_token,
           user: {
-            ...newUser._doc,
+            ...newEmployer._doc,
             password: passwordHash,
           },
         });
@@ -226,17 +223,6 @@ const authCtrl = {
           { is_active: false }
         );
       } 
-      // else if (decoded.role === "Moderator") {
-      //   logoutuser = await Moderator.findOneAndUpdate(
-      //     { _id: decoded.id },
-      //     { is_active: false }
-      //   );
-      // } else if (decoded.role === "Supervisor") {
-      //   logoutuser = await Supervisor.findOneAndUpdate(
-      //     { _id: decoded.id },
-      //     { is_active: false }
-      //   );
-      // }
       res.clearCookie("refreshtoken", { path: "/api/refresh_token" });
       return res.json({ msg: "Logged out Successfully." });
     } catch (err) {
@@ -260,9 +246,7 @@ const authCtrl = {
           }
 
           const user = await Employer.findById(result._id);
-          //   .select("-password")
-          //   .populate("followers following", "-password");
-
+ 
           if (!user) {
             res.status(400).json({ msg: "User does not exist." });
           }
