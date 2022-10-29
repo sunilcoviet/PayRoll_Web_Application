@@ -6,6 +6,7 @@ const PayType = require("../../Models/employee/payTypeModel");
 const StandardPay = require("../../Models/employee/standardPayModel");
 const employeeCtrl = {
   employee: async (req, res) => {
+    const { id } = req.params;
     const { employerId, organizationId, methods } = req.body;
     switch (methods) {
       case "POST":
@@ -15,11 +16,11 @@ const employeeCtrl = {
             firstName,
             surName,
             IRDNo,
-            startDate,
             email,
             bankDetails,
           } = req.body.employeeProfile;
-          const { department, section, job } = req.body;
+          const { department, section, job,employeeProfile } = req.body;
+          // !startDate || startDate,
           if (
             !employerId ||
             !organizationId ||
@@ -27,7 +28,6 @@ const employeeCtrl = {
             !firstName ||
             !surName ||
             !IRDNo ||
-            !startDate ||
             !email ||
             !bankDetails
           ) {
@@ -35,12 +35,15 @@ const employeeCtrl = {
               .status(400)
               .json({ msg: "required Details are missing to register." });
           }
-          var customEmployeeId = await Employee.find((err, result) => {
-            if (!err) {
-              return result.length;
-            }
-          });
-          customEmployeeId++;
+          const verification = await Employee.findOne({employeeProfile:{IRDNo:IRDNo,email:email}});
+            if (verification) {
+              return res
+              .status(400)
+              .json({ msg: "Employee details already exist." });
+            }else{
+           var customEmployeeId =await (await Employee.find({})).length;
+           customEmployeeId++
+            }          
           const newEmployee = new Employee({
             employerId,
             organizationId,
@@ -50,21 +53,23 @@ const employeeCtrl = {
             job,
             customEmployeeId,
           });
-          newEmployee.save((err, result) => {
-            console.log(JSON.stringify(result));
+
+          await newEmployee.save()
             res.json({
-              msg: "Data Successfully posted !",
+              msg: "Registered Successfully!",
+              // access_token,
+              user: {
+                ...newEmployee._doc,
+              },
             });
-          });
         } catch (err) {
           return res.status(500).json({ msg: err.message });
         }
         break;
       case "GET":
         try {
-          const { _Id } = req.params;
           const details = await Employee.findOne(
-            { customEmployeeId: _Id },
+            { customEmployeeId: id },
             {
               employeeProfile: 1,
               department: 1,
@@ -73,11 +78,10 @@ const employeeCtrl = {
               customEmployeeId: 1,
             }
           );
+          
           res.json({
             msg: "Employee details !",
-            ContactDetails: {
               details,
-            },
           });
         } catch (err) {
           return res.status(500).json({ msg: err.message });
@@ -86,16 +90,13 @@ const employeeCtrl = {
         break;
       case "PATCH":
         try {
-          const { _Id } = req.params;
-          const update = req.body;
+          const update = req.body.update;
           const details = await Employee.findOneAndUpdate(
-            { customEmployeeId: _Id },
-            {
+            { customEmployeeId: id },
               update,
-            }
           );
           const updates = await Employee.findOne(
-            { customEmployeeId: _Id },
+            { customEmployeeId: id },
             {
               employeeProfile: 1,
               department: 1,
@@ -116,9 +117,8 @@ const employeeCtrl = {
         break;
       case "DELETE":
         try {
-          const { _Id } = req.body;
           const details = await Employee.findOneAndUpdate(
-            { customEmployeeId: customEmployeeId },
+            { customEmployeeId: id },
             { deleted: true }
           );
           res.json({
@@ -249,47 +249,54 @@ const employeeCtrl = {
     // }
   },
   employeesList: async (req, res) => {
-    try {
-      const {
-        employerId,
-        organizationId,
-      } = req.body;
-      if (!employerId || !organizationId) {
-        return res.status(400).json({ msg: "required Details are missing." });
-      }
-      const list = await Employee.find(
-        {
-          employerId: employerId,
-          organizationId: organizationId,
-          deleted: false,
-        },
-        { employeeProfile: 1, customEmployeeId: 1 }
-      );
-      res.json({
-        msg: "Employees List!",
-        users: {
-          list,
-        },
-      });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
+    const {methods}=req.body;
+    switch (methods) {
+      case "GET":
+        try {
+          const {
+            employerId,
+            organizationId,
+          } = req.body;
+          if (!employerId || !organizationId) {
+            return res.status(400).json({ msg: "required Details are missing." });
+          }
+          const list = await Employee.find(
+            {
+              employerId: employerId,
+              organizationId: organizationId,
+              deleted: false,
+            },
+            { employeeProfile: 1, customEmployeeId: 1 }
+          );
+          res.json({
+            msg: "Employees List!",
+            users: {
+              list,
+            },
+          });
+        } catch (err) {
+          return res.status(500).json({ msg: err.message });
+        }
+        break;
     }
+   
   },
   ContactDetails: async (req, res) => {
-    const { _Id } = req.params;
-    const { defaultEmployeeId, employeeCode, address, phoneNumber, methods } =
-      req.body;
-    if (!defaultEmployeeId) {
-      return res
-        .status(400)
-        .json({ msg: "required Details are missing to register." });
-    }
+    const { id } = req.params;
+ const {methods}=req.body;
     switch (methods) {
       case "POST":
         try {
+          const { defaultEmployeeId, employeeCode, address, phoneNumber} =
+          req.body;
+        if (!defaultEmployeeId) {
+          return res
+            .status(400)
+            .json({ msg: "required Details are missing to register." });
+        }
           const newContact = new ContactDetails({
             defaultEmployeeId,
-            customEmployeeId: _Id,
+            customEmployeeId: id,
             employeeCode,
             address,
             phoneNumber,
@@ -307,19 +314,22 @@ const employeeCtrl = {
       case "GET":
         try {
           const details = await ContactDetails.findOne(
-            { customEmployeeId: _Id },
+            { customEmployeeId: id },
             {
               employeeCode: 1,
               address: 1,
               phoneNumber: 1,
             }
           );
-          res.json({
-            msg: "Contact details !",
-            ContactDetails: {
-              details,
-            },
-          });
+            if(details){
+              res.json({
+                msg: "Contact details !",
+                ContactDetails: {
+                  result,
+                },
+              });
+            }
+          
         } catch (err) {
           return res.status(500).json({ msg: err.message });
         }
@@ -328,14 +338,9 @@ const employeeCtrl = {
       case "PATCH":
         try {
           const update = req.body;
-          const details = await ContactDetails.findOneAndUpdate(
-            { customEmployeeId: _Id },
-            {
-              update,
-            }
-          );
+          const details = await ContactDetails.findOneAndUpdate({ customEmployeeId:id },update);
           const updates = await ContactDetails.findOne(
-            { customEmployeeId: _Id },
+            { customEmployeeId: id },
             { employeeCode: 1, address: 1, phoneNumber: 1 }
           );
           res.json({
@@ -351,9 +356,9 @@ const employeeCtrl = {
         break;
       case "DELETE":
         try {
-          const details = await ContactDetails.findOneAndDelete({
-            customEmployeeId: _Id,
-          });
+          const details = await ContactDetails.findOneAndUpdate({
+            customEmployeeId: id,
+          },{deleted: true});
           res.json({
             msg: "Contact removed successfully !",
           });

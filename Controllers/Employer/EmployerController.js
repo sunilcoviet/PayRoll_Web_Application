@@ -9,13 +9,18 @@ const employerCtrl = {
   // Fetch All Patients Info
   usersList: async (req, res) => {
     try {
-      const list = await Users.find({ role: "employeer" });
-      res.json({
-        msg: "Users List!",
-        users: {
-          list,
-        },
-      });
+      const list = await Users.find(
+        { delete: false },
+        { deleted: 0, access_token: 0, createdAt: 0, is_active: 0, role: -1 }
+      );
+      if (list) {
+        res.json({
+          msg: "Users List!",
+          users: {
+            list,
+          },
+        });
+      }
     } catch (err) {
       return res.status(500).json({ msg: err.message });
     }
@@ -24,8 +29,6 @@ const employerCtrl = {
     try {
       const { email, password } = await req.body;
       const passwordHash = await md5(password);
-
-      // console.log(email, passwordHash);
       const user = await Users.findOne({
         email: email,
         password: passwordHash,
@@ -33,12 +36,6 @@ const employerCtrl = {
       if (!user) {
         return res.status(400).json({ msg: "Email or Password is incorrect." });
       }
-
-      // const isMatch = await bcrypt.compare(passwordHash,user.password);
-      // if (passwordHash!==user.password) {
-      //   return res.status(400).json({ msg: "Email or Password is incorrect." });
-      // }
-
       const access_token = createAccessToken({
         id: user._id,
         username: user.username,
@@ -51,12 +48,7 @@ const employerCtrl = {
         email: user.email,
         role: user.role,
       });
-
-      // console.log("access_token", access_token);
-      // console.log("refresh_token", refresh_token);
-
       user.access_token = access_token;
-
       res.cookie("refreshtoken", refresh_token, {
         httpOnly: true,
         path: "/api/refresh_token",
@@ -83,66 +75,75 @@ const employerCtrl = {
   },
   //  Fetch the Specific/Single Employeer Info
   employeerDetails: async (req, res) => {
-    try {
-      // const patientID = req.params.id;
-      const userInfo = await Users.findOne({ _id: req.params.id });
-      if (!userInfo) {
-        return res.status(400).json({ msg: "User Data Not Found." });
-      }
-      res.json({
-        msg: "User Details!",
-        user: {
-          userInfo,
-        },
-      });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
+    const { id } = req.params;
+    const { methods } = req.body;
+    switch (methods) {
+      case "GET":
+        try {
+          const userInfo = await Users.findOne({ _id: id });
+          if (!userInfo) {
+            return res.status(400).json({ msg: "User Data Not Found." });
+          }
+          res.json({
+            msg: "User Details!",
+            user: {
+              userInfo,
+            },
+          });
+        } catch (err) {
+          return res.status(500).json({ msg: err.message });
+        }
+        break;
+
+      case "PATCH":
+        // Update Employeer Info
+        try {
+          const update = req.body.update;
+          console.log(update);
+          //Validate the Employeer
+          const userInfo = await Users.findOne({ _id: id });
+          // console.log(JSON.stringify(userInfo));
+          if (!userInfo) {
+            return res.status(400).json({ msg: "Employeer Data Not Found." });
+          } //Update the Employeer Data
+          await Users.findOneAndUpdate({ _id: id }, update);
+
+          const userUpdateInfo = await Users.findOne({ _id: id });
+          res.json({
+            msg: "Employeer Details Updated Successfully!",
+            user: {
+              userUpdateInfo,
+            },
+          });
+        } catch (err) {
+          return res.status(500).json({ msg: err.message });
+        }
+
+        break;
+      // Deleting Employeer Info
+      case "DELETE":
+        try {
+          //Validate the User
+          const userInfo = await Users.findOne({ _id: id });
+          // console.log(userInfo);
+          if (!userInfo) {
+            return res.status(400).json({ msg: "Employeer Data Not Found." });
+          }
+          //Update the Patient Data
+          await Users.findOneAndUpdate(
+            { _id: userInfo._id },
+            { deleted: true }
+          );
+          res.json({
+            msg: "Employeer Deleted Successfully!",
+          });
+        } catch (err) {
+          return res.status(500).json({ msg: err.message });
+        }
+        break;
     }
   },
-  // Update Employeer Info
-  employeerUpdate: async (req, res) => {
-    try {
-      const employeerID = await req.params.id;
-      //Validate the Employeer
-      const userInfo = await Users.findOne({ _id: employeerID });
-      console.log(JSON.stringify(userInfo));
-      if (!userInfo) {
-        return res.status(400).json({ msg: "Employeer Data Not Found." });
-      }      //Update the Employeer Data
-      await Users.findOneAndUpdate({ _id: userInfo._id }, req.body);
-      const userUpdateInfo = await Users.findOne({ _id: employeerID });
-      res.json({
-        msg: "Employeer Details Updated Successfully!",
-        user: {
-          userUpdateInfo,
-        },
-      });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
-  // Deleting Employeer Info
-  employeerDelete: async (req, res) => {
-    try {
-      const employerID = await req.params;
 
-      //Validate the Patient
-      const userInfo = await Users.findOne({ _id: employerID.id });
-
-      if (!userInfo) {
-        return res.status(400).json({ msg: "Employeer Data Not Found." });
-      }
-
-      //Update the Patient Data
-      await Users.deleteOne({ _id: userInfo._id });
-
-      res.json({
-        msg: "Employeer Deleted Successfully!",
-      });
-    } catch (err) {
-      return res.status(500).json({ msg: err.message });
-    }
-  },
   generateAccessToken: async (req, res) => {
     try {
       const rf_token = req.cookies.refreshtoken;

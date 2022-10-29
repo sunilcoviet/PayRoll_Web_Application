@@ -1,15 +1,15 @@
-// const router = require('express').Router();
-// // const patientCtrl = require('../Controllers/PatientController');
-// const auth = require('../Middleware/auth');
+const router = require('express').Router();
+const Organization = require('../Controllers/Organization/OrganizationController');
+const auth = require('../Middleware/auth');
 
-// router.get('/list', patientCtrl.usersList);
+router.get('/:id/list', Organization.getOrganizations);
 
-// router.get("/details/:id",auth, patientCtrl.patientDetails);
+router.post("/add",auth, Organization.organization);
 
-// router.post("/login", patientCtrl.login);
+router.get("/:id",auth, Organization.organization);
 
-// router.patch("/update/:id",auth, patientCtrl.patientUpdate);
+router.patch("/update/:id",auth, Organization.organization);
 
-// router.delete("/remove/:id", patientCtrl.patientDelete);
+router.delete("/remove/:id", Organization.organization);
 
-// module.exports = router;
+module.exports = router;

@@ -31,7 +31,7 @@ app.use('/api/auth', AuthRouter);
 app.use('/api/admin', AdminRouter);
 app.use('/api/employee',EmployeeRouter);
 app.use('/api/employer',EmployerRouter);
-// app.use('/api/organization',OrganizationRouter);
+app.use('/api/organization',OrganizationRouter);
 
 
 //mongodb URL

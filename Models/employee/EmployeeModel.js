@@ -27,7 +27,7 @@ const employeeSchema = new mongoose.Schema({
       required: [true, "Please Enter Your Name"],
       maxLength: [30, "Name cannot exceed 30 characters"],
       minLength: [4, "Name should have more than 4 characters"],
-      unique: true,
+      // unique: true,
     },
     IRDNo: {
       type: Number,
@@ -38,6 +38,7 @@ const employeeSchema = new mongoose.Schema({
     },
     startDate: {
       type: Date,
+      default:Date.now(),
     },
     bankDetails: {
       accountHolder: {
@@ -55,7 +56,7 @@ const employeeSchema = new mongoose.Schema({
       account: {
         type: Number,
         required: [true, "Please Enter Your Bank Account Number"],
-        unique: true,
+        // unique: true,
       },
       suffix: {
         type: Number,
@@ -331,7 +332,7 @@ const employeeSchema = new mongoose.Schema({
   },
   Job: {
     type: String,
-    required: [true, "Please select Job Name/Account code"],
+    // required: [true, "Please select Job Name/Account code"],
   },
   is_active: { type: Boolean, default: false },
   deleted: { type: Boolean, default: false},

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 const organizationSchema = new mongoose.Schema({
   employerId: {
     type: mongoose.Types.ObjectId,
@@ -83,6 +84,10 @@ const organizationSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please Enter Your schedule for payments"],
   },
+  deleted:{
+    type: Boolean,
+    default: false,
+  }
 });
 
 module.exports = mongoose.model("Organization", organizationSchema);

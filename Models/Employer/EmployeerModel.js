@@ -5,13 +5,6 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 
 const employerSchema = new mongoose.Schema({
-  //  employeerID: {
-  //       type: Number,
-  //       required: [true, "Please Enter Your Name"],
-  //       unique: true,
-  //       maxLength: [30, "Name cannot exceed 30 characters"],
-  //       minLength: [4, "Name should have more than 4 characters"],
-  //   },
   fullname: {
     type: String,
     required: [true, "Please Enter Your fullName"],
@@ -76,10 +69,10 @@ const employerSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  deleted:{type: Boolean, default: false},
   resetPasswordToken: String,
   resetPasswordExpire: Date,
 });
-
 employerSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();

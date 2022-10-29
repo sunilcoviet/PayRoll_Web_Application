@@ -11,7 +11,7 @@ const finesPaymentSchema = new mongoose.Schema({
    },
   ministryJusticeFine: [
     {
-      PPNnumber: {
+      PhNnumber: {
         type: Number,
         required: false,
       },
