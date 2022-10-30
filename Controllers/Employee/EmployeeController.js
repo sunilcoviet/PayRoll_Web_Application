@@ -11,15 +11,9 @@ const employeeCtrl = {
     switch (methods) {
       case "POST":
         try {
-          const {
-            fullName,
-            firstName,
-            surName,
-            IRDNo,
-            email,
-            bankDetails,
-          } = req.body.employeeProfile;
-          const { department, section, job,employeeProfile } = req.body;
+          const { fullName, firstName, surName, IRDNo, email, bankDetails } =
+            req.body.employeeProfile;
+          const { department, section, job, employeeProfile } = req.body;
           // !startDate || startDate,
           if (
             !employerId ||
@@ -35,15 +29,19 @@ const employeeCtrl = {
               .status(400)
               .json({ msg: "required Details are missing to register." });
           }
-          const verification = await Employee.findOne({employeeProfile:{IRDNo:IRDNo,email:email}});
-            if (verification) {
-              return res
+          const verification = await Employee.findOne({
+            employeeProfile: { IRDNo: IRDNo, email: email },
+          });
+          if (verification) {
+            return res
               .status(400)
               .json({ msg: "Employee details already exist." });
-            }else{
-           var customEmployeeId =await (await Employee.find({})).length;
-           customEmployeeId++
-            }          
+          } else {
+           var list = await Employee.find({},{customEmployeeId:1}).sort({customEmployeeId:-1});
+            // var customEmployeeId = await (await Employee.find({})).length;
+           customEmployeeId= list[0].customEmployeeId;
+            customEmployeeId++;
+          }
           const newEmployee = new Employee({
             employerId,
             organizationId,
@@ -54,14 +52,14 @@ const employeeCtrl = {
             customEmployeeId,
           });
 
-          await newEmployee.save()
-            res.json({
-              msg: "Registered Successfully!",
-              // access_token,
-              user: {
-                ...newEmployee._doc,
-              },
-            });
+          await newEmployee.save();
+          res.json({
+            msg: "Registered Successfully!",
+            // access_token,
+            user: {
+              ...newEmployee._doc,
+            },
+          });
         } catch (err) {
           return res.status(500).json({ msg: err.message });
         }
@@ -78,10 +76,10 @@ const employeeCtrl = {
               customEmployeeId: 1,
             }
           );
-          
+
           res.json({
             msg: "Employee details !",
-              details,
+            details,
           });
         } catch (err) {
           return res.status(500).json({ msg: err.message });
@@ -93,7 +91,7 @@ const employeeCtrl = {
           const update = req.body.update;
           const details = await Employee.findOneAndUpdate(
             { customEmployeeId: id },
-              update,
+            update
           );
           const updates = await Employee.findOne(
             { customEmployeeId: id },
@@ -129,136 +127,17 @@ const employeeCtrl = {
         }
         break;
     }
-    // if (methods === "POST") {
-    //   try {
-    //     const {
-    //       fullName,
-    //       firstName,
-    //       surName,
-    //       IRDNo,
-    //       startDate,
-    //       email,
-    //       bankDetails,
-    //     } = req.body.employeeProfile;
-    //     const { department, section, job } = req.body;
-    //     if (
-    //       !employerId ||
-    //       !organizationId ||
-    //       !fullName ||
-    //       !firstName ||
-    //       !surName ||
-    //       !IRDNo ||
-    //       !startDate ||
-    //       !email ||
-    //       !bankDetails
-    //     ) {
-    //       return res
-    //         .status(400)
-    //         .json({ msg: "required Details are missing to register." });
-    //     }
-    //     customEmployeeId = await Employee.find((err, result) => {
-    //       if (!err) {
-    //         return result.length;
-    //       }
-    //     });
-    //     customEmployeeId++;
-    //     const newEmployee = new Employee({
-    //       employerId,
-    //       organizationId,
-    //       employeeProfile,
-    //       department,
-    //       section,
-    //       job,
-    //       customEmployeeId,
-    //     });
-    //     newEmployee.save((err, result) => {
-    //       console.log(JSON.stringify(result));
-    //       res.json({
-    //         msg: "Data Successfully posted !",
-    //       });
-    //     });
-    //   } catch (err) {
-    //     return res.status(500).json({ msg: err.message });
-    //   }
-    // }
-    // if (methods === "PATCH" || methods === "UPDATE") {
-    //   try {
-    //     const update = req.body;
-    //     const details = await Employee.findOneAndUpdate(
-    //       { customEmployeeId: customEmployeeId },
-    //       {
-    //         update,
-    //       }
-    //     );
-    //     const updates = await Employee.findOne(
-    //       { customEmployeeId: customEmployeeId },
-    //       {
-    //         employeeProfile: 1,
-    //         department: 1,
-    //         section: 1,
-    //         job: 1,
-    //         customEmployeeId: 1,
-    //       }
-    //     );
-    //     res.json({
-    //       msg: "Contact Details !",
-    //       ContactDetails: {
-    //         updates,
-    //       },
-    //     });
-    //   } catch (err) {
-    //     return res.status(500).json({ msg: err.message });
-    //   }
-    // }
-    // if (methods === "DELETE") {
-    //   try {
-    //     const { customEmployeeId } = req.body;
-    //     const details = await Employee.findOneAndUpdate(
-    //       { customEmployeeId: customEmployeeId },
-    //       { deleted: true }
-    //     );
-    //     res.json({
-    //       msg: " removed successfully !",
-    //     });
-    //   } catch (err) {
-    //     return res.status(500).json({ msg: err.message });
-    //   }
-    // }
-    // if (methods == "GET") {
-    //   try {
-    //     const {customEmployeeId}=req.body;
-    //     const details = await Employee.findOne(
-    //       { customEmployeeId: customEmployeeId },
-    //       {
-    //         employeeProfile: 1,
-    //         department: 1,
-    //         section: 1,
-    //         job: 1,
-    //         customEmployeeId: 1,
-    //       }
-    //     );
-    //     res.json({
-    //       msg: "Employee details !",
-    //       ContactDetails: {
-    //         details,
-    //       },
-    //     });
-    //   } catch (err) {
-    //     return res.status(500).json({ msg: err.message });
-    //   }
-    // }
   },
   employeesList: async (req, res) => {
-    const {methods}=req.body;
+    const { methods } = req.body;
     switch (methods) {
       case "GET":
         try {
-          const {
-            employerId,
-            organizationId,
-          } = req.body;
+          const { employerId, organizationId } = req.body;
           if (!employerId || !organizationId) {
-            return res.status(400).json({ msg: "required Details are missing." });
+            return res
+              .status(400)
+              .json({ msg: "required Details are missing." });
           }
           const list = await Employee.find(
             {
@@ -279,21 +158,20 @@ const employeeCtrl = {
         }
         break;
     }
-   
   },
   ContactDetails: async (req, res) => {
     const { id } = req.params;
- const {methods}=req.body;
+    const { methods } = req.body;
     switch (methods) {
       case "POST":
         try {
-          const { defaultEmployeeId, employeeCode, address, phoneNumber} =
-          req.body;
-        if (!defaultEmployeeId) {
-          return res
-            .status(400)
-            .json({ msg: "required Details are missing to register." });
-        }
+          const { defaultEmployeeId, employeeCode, address, phoneNumber } =
+            req.body;
+          if (!defaultEmployeeId) {
+            return res
+              .status(400)
+              .json({ msg: "required Details are missing to register." });
+          }
           const newContact = new ContactDetails({
             defaultEmployeeId,
             customEmployeeId: id,
@@ -321,15 +199,14 @@ const employeeCtrl = {
               phoneNumber: 1,
             }
           );
-            if(details){
-              res.json({
-                msg: "Contact details !",
-                ContactDetails: {
-                  result,
-                },
-              });
-            }
-          
+          if (details) {
+            res.json({
+              msg: "Contact details !",
+              ContactDetails: {
+                ...details._doc,
+              },
+            });
+          }
         } catch (err) {
           return res.status(500).json({ msg: err.message });
         }
@@ -337,18 +214,24 @@ const employeeCtrl = {
         break;
       case "PATCH":
         try {
-          const update = req.body;
-          const details = await ContactDetails.findOneAndUpdate({ customEmployeeId:id },update);
-          const updates = await ContactDetails.findOne(
+          const update = req.body.update;
+          console.log("Update" + update);
+          const details = await ContactDetails.findOneAndUpdate(
             { customEmployeeId: id },
-            { employeeCode: 1, address: 1, phoneNumber: 1 }
+            update
           );
-          res.json({
-            msg: "Updated Contact Details !",
-            ContactDetails: {
-              updates,
-            },
-          });
+          if (details) {
+            const updates = await ContactDetails.findOne(
+              { customEmployeeId: id },
+              { employeeCode: 1, address: 1, phoneNumber: 1 }
+            );
+            res.json({
+              msg: "Updated Contact Details !",
+              ContactDetails: {
+                ...updates._doc,
+              },
+            });
+          }
         } catch (err) {
           return res.status(500).json({ msg: err.message });
         }
@@ -356,9 +239,12 @@ const employeeCtrl = {
         break;
       case "DELETE":
         try {
-          const details = await ContactDetails.findOneAndUpdate({
-            customEmployeeId: id,
-          },{deleted: true});
+          const details = await ContactDetails.findOneAndUpdate(
+            {
+              customEmployeeId: id,
+            },
+            { deleted: true }
+          );
           res.json({
             msg: "Contact removed successfully !",
           });
@@ -368,121 +254,61 @@ const employeeCtrl = {
 
         break;
     }
-    // if (methods === "POST") {
-    //   try {
-    //     const newContact = new ContactDetails({
-    //       defaultEmployeeId,
-    //       customEmployeeId,
-    //       employeeCode,
-    //       address,
-    //       phoneNumber,
-    //     });
-    //     newContact.save((err, result) => {
-    //       console.log(JSON.stringify(result));
-    //       res.json({
-    //         msg: "Data Successfully posted !",
-    //       });
-    //     });
-    //   } catch (err) {
-    //     return res.status(500).json({ msg: err.message });
-    //   }
-    // }
-    // if (methods == "GET") {
-    //   try {
-    //     const details = await ContactDetails.findOne(
-    //       { customEmployeeId: customEmployeeId },
-    //       {
-    //         employeeCode: 1,
-    //         address: 1,
-    //         phoneNumber: 1,
-    //       }
-    //     );
-    //     res.json({
-    //       msg: "Fine details !",
-    //       ContactDetails: {
-    //         details,
-    //       },
-    //     });
-    //   } catch (err) {
-    //     return res.status(500).json({ msg: err.message });
-    //   }
-    // }
-    // if (methods === "PATCH" || methods === "UPDATE") {
-    //   try {
-    //     const update = req.body;
-    //     const details = await ContactDetails.findOneAndUpdate(
-    //       { customEmployeeId: _Id },
-    //       {
-    //         update,
-    //       }
-    //     );
-    //     const updates = await ContactDetails.findOne(
-    //       { customEmployeeId: _Id },
-    //       { employeeCode: 1, address: 1, phoneNumber: 1 }
-    //     );
-    //     res.json({
-    //       msg: "Contact Details !",
-    //       ContactDetails: {
-    //         updates,
-    //       },
-    //     });
-    //   } catch (err) {
-    //     return res.status(500).json({ msg: err.message });
-    //   }
-    // }
-    // if (methods === "DELETE") {
-    //   try {
-    //     const details = await ContactDetails.findOneAndDelete({
-    //       customEmployeeId: customEmployeeId,
-    //     });
-    //     res.json({
-    //       msg: "Contact removed successfully !",
-    //     });
-    //   } catch (err) {
-    //     return res.status(500).json({ msg: err.message });
-    //   }
-    // }
   },
   finesAndPayments: async (req, res) => {
-    const { _Id } = req.params;
-    const {
-      defaultEmployeeId,
-      ministryJusticeFine,
-      personalAcntPayment,
-      methods,
-    } = req.body;
-
-    if (!defaultEmployeeId ) {
-      return res
-        .status(400)
-        .json({ msg: "required Details are missing to register." });
-    }
-
+    const { id } = req.params;
+    const { methods } = req.body;
     switch (methods) {
       case "POST":
         try {
-          const newfinesAndPayments = new finesAndPayments({
+          const {
             defaultEmployeeId,
-            customEmployeeId: _Id,
             ministryJusticeFine,
             personalAcntPayment,
-          });
-          newfinesAndPayments.save((err, result) => {
-            console.log(JSON.stringify(result));
-            res.json({
-              msg: "Data Successfully posted !",
+          } = req.body;
+          if (!defaultEmployeeId) {
+            return res
+              .status(400)
+              .json({ msg: "required Details are missing to register." });
+          }
+       if(ministryJusticeFine && personalAcntPayment){
+        var newfinesAndPayments = new finesAndPayments({
+          defaultEmployeeId,
+          customEmployeeId: id,
+          ministryJusticeFine,
+          personalAcntPayment
+        });
+       }
+       else if(personalAcntPayment && !ministryJusticeFine) {
+        var newfinesAndPayments = new finesAndPayments({
+          defaultEmployeeId,
+          customEmployeeId: id,
+          personalAcntPayment,
+        });
+       }else if(!personalAcntPayment && ministryJusticeFine){
+        var newfinesAndPayments = new finesAndPayments({
+          defaultEmployeeId,
+          customEmployeeId: id,
+          ministryJusticeFine,
+        });
+       }
+            newfinesAndPayments.save((err, result) => {
+              if(!err){ res.json({
+                msg: "Data Successfully posted !",
+                newfinesAndPayments,
+              });}
+              else{ return res.status(500).json({ msg: err.message });}
             });
-          });
+ 
         } catch (err) {
           return res.status(500).json({ msg: err.message });
         }
         break;
       case "GET":
         try {
-          const details = await finesAndPayments.findOne(
-            { customEmployeeId: _Id, delete: false },
-            { ministryJusticeFine: 1, personalAcntPayment: 1 }
-          );
+          const details = await finesAndPayments.find(
+            { customEmployeeId: id, delete: false },
+            { ministryJusticeFine: 1, personalAcntPayment: 1 });
           res.json({
             msg: "Fine details !",
             fineDetails: {
@@ -496,19 +322,19 @@ const employeeCtrl = {
         break;
       case "PATCH":
         try {
-          const update = req.body;
+          const update = req.body.update;
           const details = await finesAndPayments.findOneAndUpdate(
-            { customEmployeeId: _Id },
-            { update }
+            { customEmployeeId: id },
+             update 
           );
           const updatedDetails = await finesAndPayments.findOne(
-            { customEmployeeId: _Id },
+            { customEmployeeId: id },
             { ministryJusticeFine: 1, personalAcntPayment: 1 }
           );
           res.json({
             msg: "Upadted Fine details successfully !",
             UpdatedFineDetails: {
-              updatedDetails,
+              ...updatedDetails._doc,
             },
           });
         } catch (err) {
@@ -518,57 +344,25 @@ const employeeCtrl = {
       case "DELETE":
         try {
           const details = await finesAndPayments.findOneAndUpdate(
-            { customEmployeeId: _Id },
+            { customEmployeeId: id },
             { deleted: true }
           );
-          res.json({
-            msg: " Fine details deleted successfully !",
-          });
+          if(details){
+            res.json({
+              msg: " Fine details deleted successfully !",
+            });
+          }
         } catch (err) {
           return res.status(500).json({ msg: err.message });
         }
         break;
     }
-    // if (mehtod === "POST") {
-    //   try {
-    //     const newfinesAndPayments = new finesAndPayments({
-    //       defaultEmployeeId,
-    //       customEmployeeId,
-    //       ministryJusticeFine,
-    //       personalAcntPayment,
-    //     });
-    //     newfinesAndPayments.save((err, result) => {
-    //       console.log(JSON.stringify(result));
-    //       res.json({
-    //         msg: "Data Successfully posted !",
-    //       });
-    //     });
-    //   } catch (err) {
-    //     return res.status(500).json({ msg: err.message });
-    //   }
-    // }
-    // if (mehtod === "GET") {
-    //   try {
-    //     const details = await finesAndPayments.findOne(
-    //       { customEmployeeId: customEmployeeId },
-    //       { ministryJusticeFine: 1, personalAcntPayment: 1 }
-    //     );
-    //     res.json({
-    //       msg: "Fine details !",
-    //       fineDetails: {
-    //         details,
-    //       },
-    //     });
-    //   } catch (err) {
-    //     return res.status(500).json({ msg: err.message });
-    //   }
-    // }
   },
   history: async (req, res) => {
     try {
-      const { _Id} = req.params;
-      const{defaultEmployeeId}=req.body;
-      if (!defaultEmployeeId ) {
+      const { _Id } = req.params;
+      const { defaultEmployeeId } = req.body;
+      if (!defaultEmployeeId) {
         return res
           .status(400)
           .json({ msg: "required Details are missing to register." });
@@ -606,8 +400,12 @@ const employeeCtrl = {
   },
   PayType: async (req, res) => {
     try {
-      const {  _Id } = req.params;
-      const { defaultEmployeeId,nrmlPaysAllowances, nonTaxablePaysAllowances } = req.body;
+      const { _Id } = req.params;
+      const {
+        defaultEmployeeId,
+        nrmlPaysAllowances,
+        nonTaxablePaysAllowances,
+      } = req.body;
       if (!defaultEmployeeId) {
         return res
           .status(400)

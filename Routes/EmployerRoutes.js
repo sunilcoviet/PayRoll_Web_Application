@@ -17,6 +17,12 @@ router.patch("/update/:id",auth, employerCtrl.employeerDetails);
 
 router.delete("/remove/:id",auth ,employerCtrl.employeerDetails);
 
+router.post("/add/CD/:id",auth, employerCtrl.ContactDetails);
+router.get("/:id/CD",auth,employerCtrl.ContactDetails);
+router.patch("/update/:id/CD",auth,employerCtrl.ContactDetails);
+router.delete("/remove/:id/CD",auth,employerCtrl.ContactDetails);
+
+
 module.exports = router;
 
 

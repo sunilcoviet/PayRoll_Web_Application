@@ -7,7 +7,7 @@ const contactDetailSchema = new mongoose.Schema({
   },
   customEmployeeId: {
    type :Number,
-    required: true,
+    // required: true,
   },
   defaultEmployerId: {
     type: mongoose.Types.ObjectId,

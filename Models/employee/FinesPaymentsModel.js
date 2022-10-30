@@ -14,16 +14,19 @@ const finesPaymentSchema = new mongoose.Schema({
       PhNnumber: {
         type: Number,
         required: false,
+        unique: true
       },
       totalFine: { type: Number, required: false },
       rePay: { type: Number, required: false },
+      createdAt:{type: Date, default: Date.now()}
     },
   ],
   personalAcntPayment: [
     {
-      accountNumber: { type: Number, required: false },
+      accountNumber: { type: Number, required: false,unique: true},
       totalPayment: { type: Number, required: false },
       paymentForPays: { type: Number, required: false },
+      createdAt:{type: Date, default: Date.now()}
     },
   ],
   deleted:{type: Boolean, required: false},

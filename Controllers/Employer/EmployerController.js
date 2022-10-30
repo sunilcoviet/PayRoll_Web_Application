@@ -1,4 +1,5 @@
 const Users = require("../../Models/Employer/EmployeerModel");
+const ContactDetails= require("../../Models/employee/ContactDetailsModel");
 const {
   createAccessToken,
   createRefreshToken,
@@ -143,7 +144,94 @@ const employerCtrl = {
         break;
     }
   },
+  ContactDetails: async (req, res) => {
+    const { id } = req.params;
+ const {methods}=req.body;
+    switch (methods) {
+      case "POST":
+        try {
+          const { address, phoneNumber} =
+          req.body;
+        if (!id) {
+          return res
+            .status(400)
+            .json({ msg: "required Details are missing to register." });
+        }
+          const newContact = new ContactDetails({
+            defaultEmployerId: id,
+            address,
+            phoneNumber,
+          });
+          newContact.save((err, result) => {
+            // console.log(JSON.stringify(result));
+            res.json({
+              msg: "Data Successfully posted !",
+            });
+          });
+        } catch (err) {
+          return res.status(500).json({ msg: err.message });
+        }
+        break;
+      case "GET":
+        try {
+          const details = await ContactDetails.findOne(
+            { defaultEmployerId: id },
+            {
+              address: 1,
+              phoneNumber: 1,
+            }
+          );
+            if(details){
+              res.json({
+                msg: "Contact details !",
+                ContactDetails: {
+                  ...details._doc,
+                },
+              });
+            }
+          
+        } catch (err) {
+          return res.status(500).json({ msg: err.message });
+        }
 
+        break;
+      case "PATCH":
+        try {
+          const update = req.body.update;
+          const details = await ContactDetails.findOneAndUpdate({ defaultEmployerId:id },update);
+        if(details){
+          const updates = await ContactDetails.findOne(
+            { defaultEmployerId: id },
+            {  address: 1, phoneNumber: 1 }
+          );
+          res.json({
+            msg: "Updated Contact Details !",
+            ContactDetails: {
+              ...updates._doc,
+            },
+          });
+        }
+        
+        } catch (err) {
+          return res.status(500).json({ msg: err.message });
+        }
+
+        break;
+      case "DELETE":
+        try {
+          const details = await ContactDetails.findOneAndUpdate({
+            defaultEmployerId: id,
+          },{deleted: true});
+          res.json({
+            msg: "Contact removed successfully !",
+          });
+        } catch (err) {
+          return res.status(500).json({ msg: err.message });
+        }
+
+        break;
+    }
+  },
   generateAccessToken: async (req, res) => {
     try {
       const rf_token = req.cookies.refreshtoken;
