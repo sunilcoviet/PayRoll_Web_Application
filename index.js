@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const AuthRouter = require('./Routes/AuthenticationRoutes');
 const AdminRouter = require('./Routes/AdminRoutes');
 const EmployeeRouter = require('./Routes/EmployeeRoutes');
+
+const TimesheetRouter = require('./Routes/TimesheetRoutes');
 const EmployerRouter = require('./Routes/EmployerRoutes');
 const OrganizationRouter = require('./Routes/OrganizerRoutes');
 // const SupervisorRouter = require('./Routes/SupervisorRoutes');
@@ -30,6 +32,7 @@ app.use((req, res, next) => {
 app.use('/api/auth', AuthRouter);
 app.use('/api/admin', AdminRouter);
 app.use('/api/employee',EmployeeRouter);
+app/use('/api/timesheet', TimesheetRouter);
 app.use('/api/employer',EmployerRouter);
 app.use('/api/organization',OrganizationRouter);
 
