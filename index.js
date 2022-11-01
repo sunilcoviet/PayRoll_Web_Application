@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 app.use('/api/auth', AuthRouter);
 app.use('/api/admin', AdminRouter);
 app.use('/api/employee',EmployeeRouter);
-app/use('/api/timesheet', TimesheetRouter);
+app.use('/api/timesheet', TimesheetRouter);
 app.use('/api/employer',EmployerRouter);
 app.use('/api/organization',OrganizationRouter);
 

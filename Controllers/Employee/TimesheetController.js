@@ -1,15 +1,16 @@
-const Employer_Employee_Payment = require("../../Models/employee/timesheetModel");
+const TimeSheet = require("../../Models/employee/timesheetModel");
 const timesheetCtrl = {
   payments: async (req, res) => {
     const { id } = req.params;
+    let details;
+    let PayNumber;
     const { employerId, organizationId, methods } = req.body;
     switch (methods) {
       case "POST":
         try {
-        //   const { fullName, firstName, surName, IRDNo, email, bankDetails } =
-        //     req.body.EmployerEmployeePayments;
           const { Month, datePaid, depositToTYP, payToEmployees, alerts, givingTotal, status, depositDetails, payDetails, paymentsToEmployees } = req.body;
           // !startDate || startDate,
+          console.log('i am in ')
           if (
             !employerId ||
             !organizationId ||
@@ -20,7 +21,7 @@ const timesheetCtrl = {
             !alerts ||
             !givingTotal ||
             !status ||
-            !depositDetails ||
+            !depositDetails || 
             !payDetails ||
             !paymentsToEmployees
           ) {
@@ -29,9 +30,22 @@ const timesheetCtrl = {
               .json({ msg: "required Details are missing for Employee Payments." });
           }
 
-          let list = await Employer_Employee_Payment.find({},{PayNumber:1}).sort({PayNumber:-1});
-          let PayNumber= list[0].PayNumber;
-          PayNumber++;
+          let list = await TimeSheet.find({},).sort({PayNumber:-1});
+
+          console.log('paynumber', list)
+          
+          
+          if(list == undefined || list == ''){
+            PayNumber = 1;
+          }
+          else {
+            PayNumber= list[0].PayNumber;
+            PayNumber++;
+
+          }
+          // PayNumber++;
+
+        // let PayNumber = 1
 
         //   const verification = await Employer_Employee_Payment.findOne({ PayNumber: PayNumber });
         //   if (verification) {
@@ -44,7 +58,7 @@ const timesheetCtrl = {
         //     customEmployeeId++;
         //   }
           
-          const Employer_Employee_Payment = new Employer_Employee_Payment({
+          const newTimeSheet = new TimeSheet({
             employerId,
             organizationId,
             Month,
@@ -54,13 +68,14 @@ const timesheetCtrl = {
             alerts,
             givingTotal,
             status,
+            PayNumber,
             depositDetails,
             payDetails,
             paymentsToEmployees
 
           });
 
-          await Employer_Employee_Payment.save();
+          await newTimeSheet.save();
           res.json({
             msg: "Payment Done Successfully!",
 
@@ -75,19 +90,19 @@ const timesheetCtrl = {
         break;
       case "GET":
         try {
-          const details = await Employee.findOne(
-            { customEmployeeId: id },
-            {
-              employeeProfile: 1,
-              department: 1,
-              section: 1,
-              job: 1,
-              customEmployeeId: 1,
-            }
-          );
+
+          if(id){
+            details = await TimeSheet.findOne( { _id: id } );
+          }
+          else { 
+             
+            details = await TimeSheet.find( {} );
+            console.log('details ', details);
+          }
+          
 
           res.json({
-            msg: "Employee details !",
+            msg: "Timesheet details !",
             details,
           });
         } catch (err) {

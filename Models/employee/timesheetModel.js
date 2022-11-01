@@ -7,13 +7,8 @@ employerId: {
     ref: "Employeer",
 },
 
-// organizationId: {
-// type: mongoose.Types.ObjectId,
-// ref: "Organization",
-// },
-
 organizationId: {
-    type: ObjectId,
+    type: Object,
     required: true
 },
 
@@ -21,10 +16,7 @@ Month: {
     type: Date,
     required: true
 },
-// PayNumber: {
-//     type: String,
-//     required: true
-// },
+
 datePaid: {
     type: Date,
     required: true
@@ -45,12 +37,18 @@ alerts: {
 givingTotal: {
     type: Number,
     required: false,
-    default: 0.00
+    description: "",
+    default:0
 },
 status: {
     type: String,
-    default: 'active'
+    default: "active"
 },
+PayNumber: {
+    type: Number,
+    required: [true, "Please Enter Your Payment Number"],
+    unique: true
+  },
 
 depositDetails: {
 
@@ -94,6 +92,8 @@ payDetails: {
 paymentsToEmployees: [
 
     {
+        _id: false,
+        
         employeeName: {
             type: String,
             required: true
@@ -102,17 +102,17 @@ paymentsToEmployees: [
 
             totalGross: {
                 type: Number,
-                required: [true, "Please enter the gross amount"],
+                required: [false, "Please enter the gross amount"],
                 default: 0.00
             },
             nontaxable: {
                 type: Number,
-                required: [true, "Please enter the non taxable amount"],
+                required: [false, "Please enter the non taxable amount"],
                 default: 0.00
             },
             afterTaxDeductions: {
                 type: Number,
-                required: [true, "Please enter the tax deduction amount"],
+                required: [false, "Please enter the tax deduction amount"],
                 default: 0.00
             },
             KsEr: {
@@ -123,7 +123,8 @@ paymentsToEmployees: [
                 },
             ESCT: {
                 type: Number,
-                required: true,
+                required: false,
+                description: "",
                 default: 0.00
             },
             employeeNet: {
@@ -136,12 +137,16 @@ paymentsToEmployees: [
             }
 
         }
-        
-
     }
 ],
+is_active: { type: Boolean, default: true },
+  deleted: { type: Boolean, default: false},
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 
 
 
 });
-module.exports = mongoose.model("Employer_Employee_Payment", timeSheetSchema);
+module.exports = mongoose.model("TimeSheet", timeSheetSchema);
