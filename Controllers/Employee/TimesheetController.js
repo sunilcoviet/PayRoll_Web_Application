@@ -112,25 +112,16 @@ const timesheetCtrl = {
         break;
       case "PATCH":
         try {
-          const update = req.body.update;
-          const details = await Employee.findOneAndUpdate(
-            { customEmployeeId: id },
+          const update = req.body.paymentDetails;
+          const details = await TimeSheet.findOneAndUpdate(
+            { _id: id },
             update
           );
-          const updates = await Employee.findOne(
-            { customEmployeeId: id },
-            {
-              employeeProfile: 1,
-              department: 1,
-              section: 1,
-              job: 1,
-              customEmployeeId: 1,
-            }
-          );
+          const paymentsUpdate = await TimeSheet.findOne( { _id: id } );
           res.json({
-            msg: "Contact Details !",
-            ContactDetails: {
-              updates,
+            msg: "Payment Details Updated Succesfully!",
+            PaymentDetails: {
+              paymentsUpdate,
             },
           });
         } catch (err) {
@@ -139,12 +130,12 @@ const timesheetCtrl = {
         break;
       case "DELETE":
         try {
-          const details = await Employee.findOneAndUpdate(
-            { customEmployeeId: id },
+          const details = await TimeSheet.deleteOne(
+            { _id: id },
             { deleted: true }
           );
           res.json({
-            msg: " removed successfully !",
+            msg: " Payents Data Removed successfully !",
           });
         } catch (err) {
           return res.status(500).json({ msg: err.message });
