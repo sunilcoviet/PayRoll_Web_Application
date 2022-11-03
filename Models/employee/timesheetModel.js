@@ -93,6 +93,11 @@ paymentsToEmployees: [
 
     {
         _id: false,
+
+        employeeID: {
+            type: Object,
+            required: true
+        },
         
         employeeName: {
             type: String,
