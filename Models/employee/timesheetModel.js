@@ -15,6 +15,36 @@ Month: {
     required: true
 },
 
+
+payStart: {
+    type: Date,
+    require: false,
+    default: 0
+},
+payEnds: {
+    type: Date,
+    require: false,
+    default: 0
+},
+period: {
+    type: String,
+    require: false,
+    default: ""
+},
+taxCode: {
+    type: String,
+    required: [false, "Please select Tax Code"],
+    default:""
+},
+NoEl: {
+    type: Number,
+    required: false,
+    description: "Wages not liable for earners levy (i.e. withholding tax)",
+    default: 0,
+},
+
+
+
 datePaid: {
     type: Date,
     required: true
@@ -104,6 +134,8 @@ paymentsToEmployees: [
             type: String,
             required: true
         },
+
+
         payDetails: {
 
             totalGross: {
@@ -140,6 +172,44 @@ paymentsToEmployees: [
             pdTransfer: {
                 type: Number,
                 required: true
+            },
+
+
+            CS: {
+                type: Number,
+                required: false,
+                description: "Child Support payments",
+                default: 0,
+              },
+            SL: {
+                type: Number,
+                required: false,
+                description: "Student Loan deductions",
+                default: 0,
+            },
+            KsEe: {
+                type: Number,
+                required: false,
+                description: "Kiwisaver employee deductions",
+                default: 0,
+            },
+            PG: {
+                type: Number,
+                required: false,
+                description: "Payroll giving donated",
+                default: 0,
+            },
+            PgCrd: {
+                type: Number,
+                required: false,
+                description: "Payroll giving credits",
+                default: 0,
+            },
+            Lump: {
+                type: Number,
+                required: false,
+                description: "Lump sum payments made (i.e. bonuses)",
+                default: 0,
             }
 
         }
