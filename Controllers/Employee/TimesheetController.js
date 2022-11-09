@@ -92,11 +92,11 @@ const timesheetCtrl = {
         try {
 
           if(id){
-            details = await TimeSheet.findOne( { _id: id } );
+            details = await TimeSheet.findOne( { _id: id, deleted: false } );
           }
           else { 
              
-            details = await TimeSheet.find( {} );
+            details = await TimeSheet.find( {deleted: false} );
             console.log('details ', details);
           }
           
@@ -130,7 +130,12 @@ const timesheetCtrl = {
         break;
       case "DELETE":
         try {
-          const details = await TimeSheet.deleteOne(
+          // const details = await TimeSheet.deleteOne(
+          //   { _id: id },
+          //   { deleted: true }
+          // );
+
+          const details = await TimeSheet.findOneAndUpdate(
             { _id: id },
             { deleted: true }
           );

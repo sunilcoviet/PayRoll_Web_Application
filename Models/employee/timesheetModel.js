@@ -6,12 +6,10 @@ employerId: {
     type: mongoose.Types.ObjectId,
     ref: "Employeer",
 },
-
 organizationId: {
     type: Object,
     required: true
 },
-
 Month: {
     type: Date,
     required: true
@@ -98,7 +96,10 @@ paymentsToEmployees: [
             type: Object,
             required: true
         },
-        
+        customEmployeeId: {
+            type: Number,
+            required: true 
+          },
         employeeName: {
             type: String,
             required: true
