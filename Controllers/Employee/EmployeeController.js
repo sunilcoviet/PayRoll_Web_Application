@@ -37,9 +37,11 @@ const employeeCtrl = {
               .status(400)
               .json({ msg: "Employee details already exist." });
           } else {
-           var list = await Employee.find({},{customEmployeeId:1}).sort({customEmployeeId:-1});
+            var list = await Employee.find({}, { customEmployeeId: 1 }).sort({
+              customEmployeeId: -1,
+            });
             // var customEmployeeId = await (await Employee.find({})).length;
-           customEmployeeId= list[0].customEmployeeId;
+            customEmployeeId = list[0].customEmployeeId;
             customEmployeeId++;
           }
           const newEmployee = new Employee({
@@ -271,35 +273,67 @@ const employeeCtrl = {
               .status(400)
               .json({ msg: "required Details are missing to register." });
           }
-       if(ministryJusticeFine && personalAcntPayment){
-        var newfinesAndPayments = new finesAndPayments({
-          defaultEmployeeId,
-          customEmployeeId: id,
-          ministryJusticeFine,
-          personalAcntPayment
-        });
-       }
-       else if(personalAcntPayment && !ministryJusticeFine) {
-        var newfinesAndPayments = new finesAndPayments({
-          defaultEmployeeId,
-          customEmployeeId: id,
-          personalAcntPayment,
-        });
-       }else if(!personalAcntPayment && ministryJusticeFine){
-        var newfinesAndPayments = new finesAndPayments({
-          defaultEmployeeId,
-          customEmployeeId: id,
-          ministryJusticeFine,
-        });
-       }
-            newfinesAndPayments.save((err, result) => {
-              if(!err){ res.json({
-                msg: "Data Successfully posted !",
-                newfinesAndPayments,
-              });}
-              else{ return res.status(500).json({ msg: err.message });}
+          if (ministryJusticeFine && personalAcntPayment) {
+            var newfinesAndPayments = {
+              defaultEmployeeId,
+              customEmployeeId: id,
+              ministryJusticeFine,
+              personalAcntPayment,
+            };
+          } else if (personalAcntPayment && !ministryJusticeFine) {
+            var newfinesAndPayments = {
+              defaultEmployeeId,
+              customEmployeeId: id,
+              personalAcntPayment,
+            };
+          } else if (!personalAcntPayment && ministryJusticeFine) {
+            var newfinesAndPayments = {
+              defaultEmployeeId,
+              customEmployeeId: id,
+              ministryJusticeFine,
+            };
+          }
+          const user = await finesAndPayments.findOne({ customEmployeeId: id });
+          if (!user) {
+            new finesAndPayments(newfinesAndPayments).save((err, result) => {
+              if (!err) {
+                res.json({
+                  msg: "Data Successfully posted !",
+                  newfinesAndPayments,
+                });
+              } else {
+                return res.status(500).json({ msg: err.message });
+              }
             });
- 
+          }
+          if (user) {
+            if (ministryJusticeFine && personalAcntPayment) {
+              await finesAndPayments.updateOne(
+                { customEmployeeId: id },
+                {
+                  $push: {
+                    ministryJusticeFine: ministryJusticeFine,
+                    personalAcntPayment: personalAcntPayment,
+                  },
+                }
+              );
+            } else if (personalAcntPayment && !ministryJusticeFine) {
+              await finesAndPayments.updateOne(
+                { customEmployeeId: id },
+                { $push: { personalAcntPayment: personalAcntPayment } }
+              );
+            } else if (!personalAcntPayment && ministryJusticeFine) {
+              await finesAndPayments.updateOne(
+                { customEmployeeId: id },
+                { $push: { ministryJusticeFine: ministryJusticeFine } }
+              );
+            }
+            const updates = await finesAndPayments.findOne({ customEmployeeId: id },{ministryJusticeFine:1,personalAcntPayment:1});
+            res.json({
+              msg: "Data Successfully posted !",
+              ...updates._doc,
+            });
+          }
         } catch (err) {
           return res.status(500).json({ msg: err.message });
         }
@@ -308,7 +342,8 @@ const employeeCtrl = {
         try {
           const details = await finesAndPayments.find(
             { customEmployeeId: id, delete: false },
-            { ministryJusticeFine: 1, personalAcntPayment: 1 });
+            { ministryJusticeFine: 1, personalAcntPayment: 1 }
+          );
           res.json({
             msg: "Fine details !",
             fineDetails: {
@@ -325,7 +360,7 @@ const employeeCtrl = {
           const update = req.body.update;
           const details = await finesAndPayments.findOneAndUpdate(
             { customEmployeeId: id },
-             update 
+            update
           );
           const updatedDetails = await finesAndPayments.findOne(
             { customEmployeeId: id },
@@ -347,7 +382,7 @@ const employeeCtrl = {
             { customEmployeeId: id },
             { deleted: true }
           );
-          if(details){
+          if (details) {
             res.json({
               msg: " Fine details deleted successfully !",
             });

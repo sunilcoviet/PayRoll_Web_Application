@@ -84,7 +84,7 @@ const authCtrl = {
           access_token,
           user: {
             ...newEmployer._doc,
-            password: passwordHash,
+            password: " ",
           },
         });
         // res.json({ msg: "registered" });
