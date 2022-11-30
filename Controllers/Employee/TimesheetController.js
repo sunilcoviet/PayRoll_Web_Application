@@ -1,7 +1,7 @@
 const TimeSheet = require("../../Models/employee/timesheetModel");
 const timesheetCtrl = {
   payments: async (req, res) => {
-    const { id } = req.params;
+    const { id, fromDate, toDate } = req.params;
     let details;
     let PayNumber;
     const { employerId, organizationId, methods } = req.body;
@@ -94,10 +94,26 @@ const timesheetCtrl = {
           if(id){
             details = await TimeSheet.findOne( { _id: id, deleted: false } );
           }
+          else if(fromDate && toDate){
+
+            let from  = new Date(fromDate).toISOString();
+            let to    = new Date(toDate);
+
+            const numOfHours = 24;
+            to.setTime(to.getTime() + numOfHours * 60 * 60 * 1000);
+
+            to = to.toISOString();
+
+
+            details = await TimeSheet.find( { createdAt:{$gte:from, $lt:to}, deleted: false } );
+
+            console.log('from', from)
+            console.log('to', to)
+          }
           else { 
              
             details = await TimeSheet.find( {deleted: false} );
-            console.log('details ', details);
+            // console.log('details ', details);
           }
           
 

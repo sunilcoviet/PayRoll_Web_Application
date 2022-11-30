@@ -5,6 +5,7 @@ const auth = require('../Middleware/auth');
 //Employee Profile Operations -Done Testing
 router.post("/add",auth, timesheetCtrl.payments);
 router.get("/list/:id",auth, timesheetCtrl.payments);
+router.get("/list/:fromDate/:toDate",auth, timesheetCtrl.payments);
 router.get("/list",auth, timesheetCtrl.payments);
 router.patch("/update/:id/",auth, timesheetCtrl.payments);
 router.delete("/remove/:id", timesheetCtrl.payments);
